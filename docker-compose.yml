@@ -1,0 +1,23 @@
+version: '3.1' # version number of compose file
+
+services: # the services to be deployed
+    app: # the main service
+        build: ./api # location of the dockerfile relative to this file
+        command: npm start # command to execute when container starts
+        volumes: # bind mounting the application files so that the code updates are normal
+            - ./api:/app
+            - /app/node_modules # not to override the node_modules
+        depends_on:
+            - redisstore # to start building this after db is built
+        ports:
+            - "3000:3000" # which port of this network to map to the host
+        environment:
+            REDIS_HOST: cache
+            REDIS_PORT: 6379
+    redisstore:
+        image: redis:6.2-alpine
+        restart: always
+        ports:
+          - '6379:6379'
+        volumes: 
+          - ./cache-data:/data

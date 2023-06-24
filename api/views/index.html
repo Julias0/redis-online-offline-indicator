@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function load() {
+            const domElement = document.querySelector('.users');
+            let ticker = 'tick'
+            function refresh() {
+                fetch('http://localhost:3000/users')
+                .then(res => res.json())
+                .then(({ users }) => {
+                    if (ticker === 'tick') {
+                        ticker = 'tock'
+                    } else {
+                        ticker = 'tick';
+                    }
+                    const userList = users.map(user => `<li>${user}</li>`).reduce((agg, curr) => `${agg}\n${curr}`, ticker);
+                    domElement.innerHTML = userList;
+                })
+                .finally(() => {
+                    setTimeout(refresh, 1000);
+                });
+                // ...
+            }
+
+            // initial call, or just call refresh directly
+            setTimeout(refresh, 1000);
+        }
+    </script>
+</head>
+<body onload="load()">
+    <% if (user) { %>
+        <h2><%= user.name %></h2>
+    <% } %>
+    <div class="users"></div>
+</body>
+</html>

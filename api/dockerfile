@@ -1,0 +1,21 @@
+# defines the base image where to start creating this new image from
+FROM node:14
+
+# set the directory inside the image, where all of the upcoming commands will get executed
+WORKDIR /app
+
+# copying the package json files first so that the npm install and rebuild steps 
+# dont need to execute every time we build the image
+COPY package*.json ./
+
+# installing dependencies of the application
+RUN npm install && npm rebuild node-sass
+
+# copying the application code
+COPY . .
+
+# expose the port, still need to publish this to map to a port
+EXPOSE 3000
+
+# start the node application
+CMD [ "npm","start" ]
